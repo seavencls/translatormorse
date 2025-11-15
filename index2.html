@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Translator | X-ALPHA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #22c55e;
+            --error: #ef4444;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 15px;
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--light);
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-icon {
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .result-container {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .morse-reference {
+            margin-top: 40px;
+        }
+
+        .morse-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .morse-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .morse-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .morse-char {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .morse-code {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            background: var(--success);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid var(--card-border);
+            color: var(--gray);
+        }
+
+        .wave-animation {
+            display: inline-block;
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: var(--light);
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-satellite-dish pulse"></i>
+            </div>
+            <h1>Penerjemah Kode Morse</h1>
+            <p class="subtitle">Terjemahkan teks bahasa Indonesia ke kode Morse dan sebaliknya secepat kilat</p>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-keyboard"></i>
+                    <h2 class="card-title">Masukan Teks</h2>
+                </div>
+                <textarea id="input-text" placeholder="Ketik teks bahasa Indonesia atau kode Morse di sini..."></textarea>
+                
+                <div class="button-group">
+                    <button id="to-morse" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i>
+                        ke dalam kode morse
+                    </button>
+                    <button id="swap-btn" class="btn btn-secondary">
+                        <i class="fas fa-exchange-alt"></i>
+                        Tukar
+                    </button>
+                    <button id="to-text" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i>
+                        ke tulisan
+                    </button>
+                </div>
+                
+                <div class="tooltip">
+                    <button id="clear-btn" class="btn btn-secondary">
+                        <i class="fas fa-broom"></i>
+                        hapus
+                    </button>
+                    <span class="tooltiptext">Hapus semua teks dari input maupun output</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-code"></i>
+                    <h2 class="card-title">Hasil Terjemahan</h2>
+                </div>
+                <div class="result-container">
+                    <textarea id="output-text" placeholder="Hasil terjemahan akan muncul di sini..." readonly></textarea>
+                    <button id="copy-btn" class="copy-btn">
+                        <i class="far fa-copy"></i>
+                        salin
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card morse-reference">
+            <div class="card-header">
+                <i class="fas fa-list"></i>
+                <h2 class="card-title">Referensi Kode Morse</h2>
+            </div>
+            <div class="morse-grid" id="morse-chart">
+                <!-- Daftar kode Morse akan diisi oleh JavaScript -->
+            </div>
+        </div>
+
+        <footer>
+            <p>Dibuat dengan <span class="wave-animation">❤️(Hati)</span> untuk memudahkan komunikasi | Morse Translator v0.0.01</p>
+        </footer>
+    </div>
+
+    <div class="notification" id="notification">Teks disalin!</div>
+
+    <script>
+        // Kamus kode Morse untuk huruf dan angka
+        const morseCode = {
+            'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 
+            'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 
+            'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.', 
+            'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 
+            'Y': '-.--', 'Z': '--..',
+            '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-', 
+            '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+            '.': '.-.-.-', ',': '--..--', '?': '..--..', "'": '.----.', '!': '-.-.--', 
+            '/': '-..-.', '(': '-.--.', ')': '-.--.-', '&': '.-...', ':': '---...', 
+            ';': '-.-.-.', '=': '-...-', '+': '.-.-.', '-': '-....-', '_': '..--.-', 
+            '"': '.-..-.', '$': '...-..-', '@': '.--.-.', ' ': '/'
+        };
+
+        // Membalik kamus untuk menerjemahkan dari Morse ke teks
+        const textFromMorse = {};
+        for (const [key, value] of Object.entries(morseCode)) {
+            textFromMorse[value] = key;
+        }
+
+        // Fungsi untuk menerjemahkan teks ke kode Morse
+        function textToMorse(text) {
+            return text.toUpperCase().split('').map(char => {
+                return morseCode[char] || char;
+            }).join(' ');
+        }
+
+        // Fungsi untuk menerjemahkan kode Morse ke teks
+        function morseToText(morse) {
+            return morse.split(' ').map(code => {
+                return textFromMorse[code] || code;
+            }).join('');
+        }
+
+        // Fungsi untuk menampilkan notifikasi
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Mengisi daftar kode Morse di halaman
+        function populateMorseChart() {
+            const morseChart = document.getElementById('morse-chart');
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            
+            for (let char of letters) {
+                const div = document.createElement('div');
+                div.className = 'morse-item';
+                div.innerHTML = `
+                    <div class="morse-char">${char}</div>
+                    <div class="morse-code">${morseCode[char]}</div>
+                `;
+                morseChart.appendChild(div);
+            }
+        }
+
+        // Event listener untuk tombol terjemahkan ke Morse
+        document.getElementById('to-morse').addEventListener('click', function() {
+            const inputText = document.getElementById('input-text').value;
+            if (!inputText.trim()) {
+                showNotification('Masukkan tulisan terlebih dahulu!');
+                return;
+            }
+            
+            const outputText = textToMorse(inputText);
+            document.getElementById('output-text').value = outputText;
+            showNotification('Tulisan berhasil diterjemahkan ke Morse!');
+        });
+
+        // Event listener untuk tombol terjemahkan ke teks
+        document.getElementById('to-text').addEventListener('click', function() {
+            const inputText = document.getElementById('input-text').value;
+            if (!inputText.trim()) {
+                showNotification('Masukkan kode Morse terlebih dahulu!');
+                return;
+            }
+            
+            const outputText = morseToText(inputText);
+            document.getElementById('output-text').value = outputText;
+            showNotification('Kode Morse berhasil diterjemahkan ke tulisan!');
+        });
+
+        // Event listener untuk tombol tukar
+        document.getElementById('swap-btn').addEventListener('click', function() {
+            const inputText = document.getElementById('input-text').value;
+            const outputText = document.getElementById('output-text').value;
+            
+            document.getElementById('input-text').value = outputText;
+            document.getElementById('output-text').value = inputText;
+            showNotification('Input dan output berhasil ditukar!');
+        });
+
+        // Event listener untuk tombol salin
+        document.getElementById('copy-btn').addEventListener('click', function() {
+            const outputText = document.getElementById('output-text');
+            outputText.select();
+            document.execCommand('copy');
+            
+            showNotification('Teks berhasil disalin ke clipboard!');
+        });
+
+        // Event listener untuk tombol bersihkan
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            document.getElementById('input-text').value = '';
+            document.getElementById('output-text').value = '';
+            showNotification('Semua tulisan berhasil dibersihkan!');
+        });
+
+        // Mengisi daftar kode Morse saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', populateMorseChart);
+    </script>
+</body>
+</html>
